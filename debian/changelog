@@ -1,0 +1,8 @@
+autocutsel (0.9.0-1) unstable; urgency=low
+
+  * Initial release (Closes: #409084)
+  * changed Uploaders in debian/control
+  * added debian/watch
+
+ -- Elmar S. Heeb <elmar@heebs.ch>  Thu,  3 Jan 2008 12:26:47 +0100
+
