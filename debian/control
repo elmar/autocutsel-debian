@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Elmar S. Heeb <elmar@heebs.ch>
 Uploaders: Gürkan Sengün <gurkan@linuks.mine.nu>, Axel Beckert <abe@deuxchevaux.org>
 Build-Depends: debhelper (>= 5), autotools-dev, libxaw7-dev
-Standards-Version: 3.7.3
+Standards-Version: 3.9.2
 Homepage: http://www.nongnu.org/autocutsel/
 
 Package: autocutsel
