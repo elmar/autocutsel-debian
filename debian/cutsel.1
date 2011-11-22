@@ -4,10 +4,10 @@ cutsel \- show information about the X clipboard and the cutbuffer in sync
 .SH "SYNOPSIS" 
 .PP 
 .B cutsel
-[-selection \fIselection_name\fP]
-[-cutbuffer \fInumber\fP]
-[-debug]
-[-verbose]
+[\-selection \fIselection_name\fP]
+[\-cutbuffer \fInumber\fP]
+[\-debug]
+[\-verbose]
 {cut|sel}
 
 .LP
@@ -32,20 +32,20 @@ shows the owner of the selection.
 
 .SH "OPTIONS" 
 .TP
-.B -selection, -select, -sel, -s {CLIPBOARD|PRIMARY}
+.B \-selection, \-select, \-sel, \-s {CLIPBOARD|PRIMARY}
 Specify which selection to use.
 Default is CLIPBOARD. 
 
 .TP
-.B -cutbuffer <number>
+.B \-cutbuffer <number>
 (Details of this parameter unknown.) 
 
 .TP
-.B -debug, -d
+.B \-debug, \-d
 Run with debugging mode. 
 
 .TP
-.B -verbose, -v
+.B \-verbose, \-v
 Be more verbose.
 Reports the version and announces synchronizations.
 
@@ -67,4 +67,4 @@ On Debian systems,
 the complete text of the
 GNU General Public License
 can be found in
-/usr/share/common-licenses/GPL. 
+/usr/share/common\-licenses/GPL. 
