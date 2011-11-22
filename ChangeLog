@@ -1,3 +1,8 @@
+v0.5: 2002-05-26
+  - fixed a bug the prevented selection to be owned when
+    the cutbuffer was modified
+  - added dmalloc support (to find memory leaks)
+
 v0.4: 2002-05-19
   - perform a last check before owning the selection
     to handle properly applications updating both cutbuffer

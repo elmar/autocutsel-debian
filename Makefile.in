@@ -275,7 +275,7 @@ distdir: $(DISTFILES)
 	    || cp -p $$d/$$file $(distdir)/$$file || :; \
 	  fi; \
 	done
-autocutsel.o: autocutsel.c
+autocutsel.o: autocutsel.c config.h
 
 info-am:
 info: info-am

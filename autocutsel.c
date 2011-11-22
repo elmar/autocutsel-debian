@@ -1,7 +1,8 @@
 /*
  * autocutsel.c by Michael Witrant <mike @ lepton . fr>
- * Synchronize the cutbuffer and the selection
+ * Synchronizes the cutbuffer and the selection
  * version 0.4
+ * Copyright (c) 2001,2002 Michael Witrant.
  * 
  * Most code taken from:
  * * clear-cut-buffers.c by "E. Jay Berkenbilt" <ejb @ ql . org>
@@ -11,11 +12,27 @@
  * * xcutsel.c by Ralph Swick, DEC/Project Athena
  *   from the XFree86 project: http://www.xfree86.org/
  * 
- * Copyright (c) 2001 Michael Witrant.
- * License: GPL (http://www.gnu.org/copyleft/gpl.html)
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * This program is distributed under the terms
+ * of the GNU General Public License (read the COPYING file)
  * 
  */
 
+
+#include "config.h"
 
 #include <X11/Xmu/Atoms.h>
 #include <X11/Xmu/StdSel.h>
@@ -32,6 +49,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+
+#ifdef WITH_DMALLOC
+#include "dmalloc.h"
+#endif
 
 static Widget box;
 static Display* dpy;
@@ -127,7 +148,7 @@ static void PrintValue(value)
 	    putc(c, stdout);
 	}
       len++;
-      if (len >= 64)
+      if (len >= 48)
 	{
 	  printf("\"...");
 	  return;
@@ -287,11 +308,12 @@ static void OwnSelectionIfDiffers(w, client_data, selection, type, value, receiv
      int *format;
 {
   int length = *received_length;
-  
-  if (*type != 0 && *type != XT_CONVERT_FAIL)
-    {
-      if (length > 0 && ValueDiffers(value, length))
-	{
+
+  if (*type == 0 || 
+      *type == XT_CONVERT_FAIL || 
+      length == 0 || 
+      ValueDiffers(value, length))
+  {
 	  if (options.debug)
 	    printf("Selection is out of date. Owning it\n");
 
@@ -313,10 +335,6 @@ static void OwnSelectionIfDiffers(w, client_data, selection, type, value, receiv
 	    }
 	  else
 	    printf("WARNING: Unable to own selection!\n");
-	} else {
-	  if (options.debug)
-	    printf("Selection is up to date. Won't own it\n");
-	}
     }
 }
 
