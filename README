@@ -1,21 +1,21 @@
-autocutsel v0.1
+autocutsel v0.2
 http://www.lepton.fr/tools/autocutsel
-Copyright (c) 2001 - Michael Witrant.
-
+Copyright (c) 2001 - Michael Witrant
 
 Autocutsel is a tool to merge the two cut & paste buffers mainly used by X
-applications. It is basically the same as xcutsel(1) but it's automatic.
-It scans each buffer every 500ms and synchonizes them.
-It currently only scans the PRIMARY selection and the cut buffer 0.
+applications. It is like an automated xcutsel(1).
+It scans each buffer regularly and synchonizes them.
 
-I made this tool to have a working cut & paste between Windows and my VNC
-X desktop. I used xcutsel for some weeks and was bored clicking each time
-I copied something.
-It is my first X application and is full of borrowed code.
+It gives a working cut & paste between Windows and a VNC X desktop even
+when the Selection buffer is used (ie: GTK).
+
+
+To install, you might have to change library paths in the Makefile
 
 It is released under the GPL. See the COPYING file.
 
-Any comment is welcome.
+
+Any feedback is welcome.
 
 Michael Witrant <mike@lepton.fr>
 

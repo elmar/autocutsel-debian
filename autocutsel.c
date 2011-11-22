@@ -2,7 +2,7 @@
  * autocutsel.c by Michael Witrant <mike @ lepton . fr>
  * auto-update cutbuffer and selection when one of them change.
  * 
- * Code stolen from:
+ * Most code taken from:
  * * clear-cut-buffers.c by "E. Jay Berkenbilt" <ejb @ ql . org>
  *   in this messages:
  *     http://boudicca.tux.org/mhonarc/ma-linux/2001-Feb/msg00824.html
@@ -27,6 +27,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xaw/Box.h>
+#include <X11/Xaw/Cardinals.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -36,8 +37,60 @@ static Display* dpy;
 static XtAppContext context;
 static Atom selection;
 static int buffer;
-static char *current = NULL;
-static int current_length = 0;
+
+static XrmOptionDescRec optionDesc[] = {
+     {"-selection", "selection", XrmoptionSepArg, NULL},
+     {"-select",    "selection", XrmoptionSepArg, NULL},
+     {"-sel",       "selection", XrmoptionSepArg, NULL},
+     {"-s",         "selection", XrmoptionSepArg, NULL},
+     {"-cutbuffer", "cutBuffer", XrmoptionSepArg, NULL},
+     {"-cut",       "cutBuffer", XrmoptionSepArg, NULL},
+     {"-c",         "cutBuffer", XrmoptionSepArg, NULL},
+     {"-debug",     "debug",     XrmoptionNoArg,  "on"},
+     {"-d",         "debug",     XrmoptionNoArg,  "on"},
+     {"-pause",     "pause",     XrmoptionSepArg, NULL},
+     {"-p",         "pause",     XrmoptionSepArg, NULL},
+};
+
+int Syntax(call)
+  char *call;
+{
+    fprintf (stderr, "usage:  %s [-selection <name>] [-cutbuffer <number>] [-pause <delay>] [-debug]\n", 
+             call);
+    exit (1);
+}
+
+typedef struct {
+   String  selection_name;
+   int     buffer;
+   String  debug_option;
+   String  kill;
+   int     pause;
+   int     debug; 
+   Atom    selection;
+   char*   value;
+   int     length;
+   int     own_selection;
+} OptionsRec;
+
+OptionsRec options;
+
+#define Offset(field) XtOffsetOf(OptionsRec, field)
+
+static XtResource resources[] = {
+     {"selection", "Selection", XtRString, sizeof(String),
+       Offset(selection_name), XtRString, "PRIMARY"},
+     {"cutBuffer", "CutBuffer", XtRInt, sizeof(int),
+       Offset(buffer), XtRImmediate, (XtPointer)0},
+     {"debug", "Debug", XtRString, sizeof(String),
+       Offset(debug_option), XtRString, "off"},
+     {"kill", "kill", XtRString, sizeof(String),
+       Offset(kill), XtRString, "off"},
+     {"pause", "Pause", XtRInt, sizeof(int),
+       Offset(pause), XtRImmediate, (XtPointer)500},
+};
+
+#undef Offset
 
 static Boolean ConvertSelection(w, selection, target,
                                 type, value, length, format)
@@ -75,9 +128,9 @@ static Boolean ConvertSelection(w, selection, target,
    }
    if (*target == XA_STRING || *target == XA_TEXT(d)) {
       *type = XA_STRING;
-      *value = XtMalloc((Cardinal) current_length);
-      memmove( (char *) *value, current, current_length);
-      *length = current_length;
+      *value = XtMalloc((Cardinal) options.length);
+      memmove( (char *) *value, options.value, options.length);
+      *length = options.length;
       *format = 8;
       return True;
    }
@@ -92,7 +145,7 @@ static Boolean ConvertSelection(w, selection, target,
    }
    if (*target == XA_LENGTH(d)) {
       long *temp = (long *) XtMalloc (sizeof(long));
-      *temp = current_length;
+      *temp = options.length;
       *value = (XtPointer) temp;
       *type = XA_INTEGER;
       *length = 1;
@@ -124,6 +177,7 @@ static void LoseSelection(w, selection)
   Widget w;
   Atom *selection;
 {
+   options.own_selection = 0;
 }
 
 static void StoreBuffer(w, client_data, selection, type, value, length, format)
@@ -134,25 +188,22 @@ static void StoreBuffer(w, client_data, selection, type, value, length, format)
   unsigned long *length;
   int *format;
 {
-   
    if (*type == 0 || *type == XT_CONVERT_FAIL || *length == 0) {
-#ifdef XKB
-      XkbStdBell( XtDisplay(w), XtWindow(w), 0, XkbBI_MinorError );
-#else
-      XBell( XtDisplay(w), 0 );
-#endif
       return;
    }
    
-   if (!current || *length != current_length || memcmp(current, value, current_length))
+   if (!options.value || *length != options.length || memcmp(options.value, value, options.length))
      {
-	current = value;
-	current_length = strlen(current);
-	printf("sel -> cut: ");
-	fwrite(current, current_length, 1, stdout);
-	printf("\n");
+	options.value = value;
+	options.length = strlen(options.value);
+	if (options.debug)
+	  {
+	     printf("sel -> cut: ");
+	     fwrite(options.value, options.length, 1, stdout);
+	     printf("\n");
+	  }
 	
-	XStoreBuffer( XtDisplay(w), (char*)current, (int)(current_length),
+	XStoreBuffer( XtDisplay(w), (char*)options.value, (int)(options.length),
 		     buffer );
      } else
      XtFree(value);
@@ -165,18 +216,23 @@ void timeout(XtPointer p, XtIntervalId* i)
    int length;
 
    value = XFetchBuffer(dpy, &length, buffer);
-   if (!current || length != current_length || memcmp(current, value, current_length))
+   if (!options.value || length != options.length || memcmp(options.value, value, options.length))
      {
 	if (XtOwnSelection(box, selection,
 			   0, //XtLastTimestampProcessed(dpy),
-			   ConvertSelection, LoseSelection, NULL))
+			   ConvertSelection, LoseSelection, NULL) == True)
 	  {
-	     if (current) XFree(current);
-	     current = value;
-	     current_length = length;
-	     printf("cut -> sel: ");
-	     fwrite(current, current_length, 1, stdout);
-	     printf("\n");
+	     options.own_selection = 1;
+	     if (options.value) XFree(options.value);
+	     options.value = value;
+	     options.length = length;
+	     if (options.debug)
+	       {
+		  
+		  printf("cut -> sel: ");
+		  fwrite(options.value, options.length, 1, stdout);
+		  printf("\n");
+	       }
 	  } else
 	  {
 	     printf("unable to cut -> sel\n");
@@ -184,29 +240,48 @@ void timeout(XtPointer p, XtIntervalId* i)
      } else
      {
 	XFree(value);
-	XtGetSelectionValue(box, selection, XA_STRING,
-			    StoreBuffer, NULL,
-			    XtLastTimestampProcessed(XtDisplay(box)));
+	if (!options.own_selection)
+	  XtGetSelectionValue(box, selection, XA_STRING,
+			      StoreBuffer, NULL,
+			      XtLastTimestampProcessed(XtDisplay(box)));
      }
    
-   XtAppAddTimeOut(context, 1000, timeout, 0);
+   XtAppAddTimeOut(context, options.pause, timeout, 0);
 }
 
 int main(int argc, char* argv[])
 {
    Widget top;
    top = XtVaAppInitialize(&context, "AutoCutSel",
-			   0, 0, &argc, argv, NULL,
+			   optionDesc, XtNumber(optionDesc), &argc, argv, NULL,
 			   XtNoverrideRedirect, True,
 			   XtNgeometry, "-10-10",
 			   0);
+
+   if (argc != 1) Syntax(argv[0]);
+
+   XtGetApplicationResources(top, (XtPointer)&options,
+			     resources, XtNumber(resources),
+			     NULL, ZERO );
+
+
+   if (strcmp(options.debug_option, "on") == 0)
+     options.debug = 1;
+   else
+     options.debug = 0;
+   
+   options.value = NULL;
+   options.length = 0;
+
+   options.own_selection = 0;
+   
    box = XtCreateManagedWidget("box", boxWidgetClass, top, NULL, 0);
    dpy = XtDisplay(top);
    
    selection = XInternAtom(dpy, "PRIMARY", 0);
    buffer = 0;
    
-   XtAppAddTimeOut(context, 500, timeout, 0);
+   XtAppAddTimeOut(context, options.pause, timeout, 0);
    XtRealizeWidget(top);
    XtAppMainLoop(context);
    return 0;

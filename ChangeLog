@@ -1,2 +1,6 @@
-v0.1:
+v0.2: 2001-07-15
+  - command line options: cutbuffer, selection, pause and debug
+  - removed bell. Seems to help with VNC connections.
+
+v0.1: 2001-07-11
   - initial release

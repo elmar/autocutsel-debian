@@ -1,3 +1,2 @@
--a Makefile
--allow different delay
--allow different cutbuffer and selection
+-a decent Makefile (autoconf?)
+-auto fork in background and add -kill option
