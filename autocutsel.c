@@ -106,7 +106,7 @@ OptionsRec options;
 
 static XtResource resources[] = {
   {"selection", "Selection", XtRString, sizeof(String),
-   Offset(selection_name), XtRString, "PRIMARY"},
+   Offset(selection_name), XtRString, "CLIPBOARD"},
   {"cutBuffer", "CutBuffer", XtRInt, sizeof(int),
    Offset(buffer), XtRImmediate, (XtPointer)0},
   {"debug", "Debug", XtRString, sizeof(String),
@@ -431,7 +431,7 @@ void timeout(XtPointer p, XtIntervalId* i)
   else
     XtGetSelectionValue(box, selection, XA_STRING,
 			SelectionReceived, NULL,
-			XtLastTimestampProcessed(XtDisplay(box)));
+			CurrentTime);
   
   XtAppAddTimeOut(context, options.pause, timeout, 0);
 }
@@ -469,8 +469,8 @@ int main(int argc, char* argv[])
    
   box = XtCreateManagedWidget("box", boxWidgetClass, top, NULL, 0);
   dpy = XtDisplay(top);
-   
-  selection = XInternAtom(dpy, "PRIMARY", 0);
+  
+  selection = XInternAtom(dpy, options.selection_name, 0);
   options.selection = selection;
   buffer = 0;
    
