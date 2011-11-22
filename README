@@ -1,4 +1,4 @@
-autocutsel v0.3
+autocutsel v0.4
 http://www.lepton.fr/tools/autocutsel
 Copyright (c) 2001 - Michael Witrant
 
@@ -6,7 +6,10 @@ autocutsel synchronizes the two copy/paste buffers mainly
 used by X applications.
 It unifies "clipboards" between VNC servers and Windows
 
-To install it, you might have to change some paths in the Makefile.
+To install it:
+ ./configure
+ make
+ make install (as root)
 
 It is released under the GPL. See the COPYING file.
 

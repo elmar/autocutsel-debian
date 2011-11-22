@@ -1,3 +1,12 @@
+v0.4: 2002-05-19
+  - perform a last check before owning the selection
+    to handle properly applications updating both cutbuffer
+    and selection
+  - autoconf & automake scripts
+  - improved debug messages
+  - memory leak fixed?
+  - minor bugfixes
+	
 v0.3:
   - applied a patch from Mark Warburton to ignore the cutbuffer
     value if it's empty
