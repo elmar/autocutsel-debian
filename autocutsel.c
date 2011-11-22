@@ -1,7 +1,7 @@
 /*
  * autocutsel.c by Michael Witrant <mike @ lepton . fr>
  * Synchronizes the cutbuffer and the selection
- * version 0.6
+ * version 0.6.1
  * Copyright (c) 2001,2002 Michael Witrant.
  * 
  * Most code taken from:
@@ -120,14 +120,15 @@ static XtResource resources[] = {
 
 #undef Offset
 
-static void PrintValue(value)
+static void PrintValue(value, length)
      char *value;
+     int length;
 {
   unsigned char c;
   int len = 0;
   
   putc('"', stdout);
-  for (; *value; value++)
+  for (; length > 0; length--, value++)
     {
       c = (unsigned char)*value;
       switch (c)
@@ -206,8 +207,8 @@ static Boolean ConvertSelection(w, selection, target,
 
     if (options.debug)
       {
-	printf("%p: sent as string: ", target);
-	PrintValue((char*)*value);
+	printf("Giving value as string: ");
+	PrintValue((char*)*value, *length);
 	printf("\n");
       }
    
@@ -269,33 +270,34 @@ static int ValueDiffers(value, length)
 {
   return (!options.value ||
 	  length != options.length ||
-	  memcmp(options.value, value, options.length + 1)
+	  memcmp(options.value, value, options.length)
 	  );
 }
 
 // Update the current value
-static void ChangeValue(value)
+static void ChangeValue(value, length)
      char *value;
+     int length;
 {
   if (options.value)
     XtFree(options.value);
 
-  options.length = strlen(value);
-  options.value = XtMalloc(options.length + 1);
+  options.length = length;
+  options.value = XtMalloc(options.length);
   if (!options.value)
     printf("WARNING: Unable to allocate memory to store the new value\n");
   else
     {
-      memcpy(options.value, value, options.length + 1);
+      memcpy(options.value, value, options.length);
 
       if (options.debug)
 	{
 	printf("New value saved: ");
-	PrintValue(options.value);
+	PrintValue(options.value, options.length);
 	printf("\n");
 	}
     }
-}     
+}
 
 // Called just before owning the selection, to ensure we don't
 // do it if the selection already has the same value
@@ -320,7 +322,7 @@ static void OwnSelectionIfDiffers(w, client_data, selection, type, value, receiv
       if (options.verbose)
 	{
 	  printf("cut -> sel: ");
-	  PrintValue(value);
+	  PrintValue(value, length);
 	  printf("\n");
 	}
       
@@ -353,11 +355,11 @@ static void CheckBuffer()
       if (options.debug)
 	{
 	printf("Buffer changed: ");
-	PrintValue(value);
+	PrintValue(value, length);
 	printf("\n");
 	}
       
-      ChangeValue(value);
+      ChangeValue(value, length);
       XtGetSelectionValue(box, selection, XA_STRING,
 			  OwnSelectionIfDiffers, NULL,
 			  XtLastTimestampProcessed(XtDisplay(box)));
@@ -384,15 +386,15 @@ static void SelectionReceived(w, client_data, selection, type, value, received_l
 	  if (options.debug)
 	    {
 	      printf("Selection changed: ");
-	      PrintValue((char*)value);
+	      PrintValue((char*)value, length);
 	      printf("\n");
 	    }
 	  
-	  ChangeValue((char*)value);
+	  ChangeValue((char*)value, length);
 	  if (options.verbose)
 	    {
 	      printf("sel -> cut: ");
-	      PrintValue(options.value);
+	      PrintValue(options.value, options.length);
 	      printf("\n");
 	    }
 	  if (options.debug)
