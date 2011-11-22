@@ -28,4 +28,6 @@ License:
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 The Debian packaging is (C) 2007, Elmar S. Heeb <elmar@heebs.ch> and
-is licensed under the GPL, see `/usr/share/common-licenses/GPL'.
+is licensed under the GPL 2 or later.
+
+See `/usr/share/common-licenses/GPL-2' for the full license text.
