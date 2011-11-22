@@ -10,7 +10,7 @@ INSTALL = install
 LDFLAGS = -L/usr/X11R6/lib -lXext -lX11 -lXt -lXmu -lXaw
 CFLAGS  = -Wall -O2 -I/usr/X11R6/include
 DISTRIB = COPYING README ChangeLog TODO Makefile autocutsel.c
-VERSION=0.2
+VERSION=0.3
 
 autocutsel: autocutsel.o
 	$(CC) -o autocutsel autocutsel.o $(LDFLAGS)

@@ -1,6 +1,14 @@
+v0.3:
+  - applied a patch from Mark Warburton to ignore the cutbuffer
+    value if it's empty
+  - added -verbose (displays what -debug displayed before)
+  - changed -debug to display more debugging informations
+  - modified the synchronization process. it should fix some
+    update problems.
+
 v0.2: 2001-07-15
   - command line options: cutbuffer, selection, pause and debug
-  - removed bell. Seems to help with VNC connections.
+  - removed bell on error. Seems to help with VNC connections.
 
 v0.1: 2001-07-11
   - initial release
