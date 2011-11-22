@@ -9,7 +9,7 @@ Homepage: http://www.nongnu.org/autocutsel/
 
 Package: autocutsel
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Enhances: vnc-viewer, emacsen
 Description: Keep the X clipboard and the cutbuffer in sync
  This tracks changes in the server's cutbuffer and clipboard
