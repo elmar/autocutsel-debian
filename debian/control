@@ -6,6 +6,8 @@ Uploaders: Axel Beckert <abe@debian.org>
 Build-Depends: debhelper (>= 5), autotools-dev, libxaw7-dev
 Standards-Version: 3.9.2
 Homepage: http://www.nongnu.org/autocutsel/
+VCS-Git: git://github.com/elmar/autocutsel-debian.git
+VCS-Browser: https://github.com/elmar/autocutsel-debian
 
 Package: autocutsel
 Architecture: any
