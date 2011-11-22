@@ -1,7 +1,7 @@
 /*
  * autocutsel.c by Michael Witrant <mike @ lepton . fr>
  * Synchronizes the cutbuffer and the selection
- * version 0.4
+ * version 0.6
  * Copyright (c) 2001,2002 Michael Witrant.
  * 
  * Most code taken from:
@@ -308,34 +308,35 @@ static void OwnSelectionIfDiffers(w, client_data, selection, type, value, receiv
      int *format;
 {
   int length = *received_length;
-
+  
   if (*type == 0 || 
       *type == XT_CONVERT_FAIL || 
       length == 0 || 
       ValueDiffers(value, length))
-  {
+    {
+      if (options.debug)
+	printf("Selection is out of date. Owning it\n");
+      
+      if (options.verbose)
+	{
+	  printf("cut -> sel: ");
+	  PrintValue(value);
+	  printf("\n");
+	}
+      
+      if (XtOwnSelection(box, options.selection,
+			 0, //XtLastTimestampProcessed(dpy),
+			 ConvertSelection, LoseSelection, NULL) == True)
+	{
 	  if (options.debug)
-	    printf("Selection is out of date. Owning it\n");
-
-	  if (options.verbose)
-	    {
-	      printf("cut -> sel: ");
-	      PrintValue(value);
-	      printf("\n");
-	    }
-
-	  if (XtOwnSelection(box, options.selection,
-			     0, //XtLastTimestampProcessed(dpy),
-			     ConvertSelection, LoseSelection, NULL) == True)
-	    {
-	      if (options.debug)
-		printf("Selection owned\n");
-	      
-	      options.own_selection = 1;
-	    }
-	  else
-	    printf("WARNING: Unable to own selection!\n");
+	    printf("Selection owned\n");
+	  
+	  options.own_selection = 1;
+	}
+      else
+	printf("WARNING: Unable to own selection!\n");
     }
+  XtFree(value);
 }
 
 // Look for change in the buffer, and update
@@ -401,10 +402,12 @@ static void SelectionReceived(w, client_data, selection, type, value, received_l
 		       (char*)options.value,
 		       (int)(options.length),
 		       buffer );
-
+	  
+	  XtFree(value);
 	  return;
 	}
     }
+  XtFree(value);
   // Unless a new selection value is found, check the buffer value
   CheckBuffer();
 }
