@@ -87,12 +87,12 @@ VERSION = @VERSION@
 
 bin_PROGRAMS = autocutsel cutsel
 
-autocutsel_SOURCES = autocutsel.c
-cutsel_SOURCES = cutsel.c
+autocutsel_SOURCES = autocutsel.c common.c
+cutsel_SOURCES = cutsel.c common.c
 
-INCLUDES = 
+noinst_HEADERS = common.h
 
-EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL README TODO
+EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL README TODO test_autocutsel.rb
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = config.h
@@ -109,11 +109,11 @@ X_CFLAGS = @X_CFLAGS@
 X_LIBS = @X_LIBS@
 X_EXTRA_LIBS = @X_EXTRA_LIBS@
 X_PRE_LIBS = @X_PRE_LIBS@
-autocutsel_OBJECTS =  autocutsel.$(OBJEXT)
+autocutsel_OBJECTS =  autocutsel.$(OBJEXT) common.$(OBJEXT)
 autocutsel_LDADD = $(LDADD)
 autocutsel_DEPENDENCIES = 
 autocutsel_LDFLAGS = 
-cutsel_OBJECTS =  cutsel.$(OBJEXT)
+cutsel_OBJECTS =  cutsel.$(OBJEXT) common.$(OBJEXT)
 cutsel_LDADD = $(LDADD)
 cutsel_DEPENDENCIES = 
 cutsel_LDFLAGS = 
@@ -122,6 +122,8 @@ COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CF
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
+HEADERS =  $(noinst_HEADERS)
+
 DIST_COMMON =  README ./stamp-h.in AUTHORS COPYING ChangeLog INSTALL \
 Makefile.am Makefile.in NEWS TODO aclocal.m4 config.guess config.h.in \
 config.sub configure configure.ac install-sh ltmain.sh missing \
@@ -335,8 +337,6 @@ distdir: $(DISTFILES)
 	    || cp -p $$d/$$file $(distdir)/$$file || :; \
 	  fi; \
 	done
-autocutsel.o: autocutsel.c config.h
-cutsel.o: cutsel.c config.h
 
 info-am:
 info: info-am
@@ -360,7 +360,7 @@ install-am: all-am
 install: install-am
 uninstall-am: uninstall-binPROGRAMS
 uninstall: uninstall-am
-all-am: Makefile $(PROGRAMS) config.h
+all-am: Makefile $(PROGRAMS) $(HEADERS) config.h
 all-redirect: all-am
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install

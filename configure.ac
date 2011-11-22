@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(autocutsel.c)
-AM_INIT_AUTOMAKE(autocutsel,0.8.1)
+AM_INIT_AUTOMAKE(autocutsel,0.9.0)
 
 AM_CONFIG_HEADER(config.h)
 
@@ -39,6 +39,7 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_SIGNAL
 
 dnl Checks for library functions.
+AC_FUNC_SETPGRP
 
 dnl Warnings
 AC_MSG_CHECKING([whether to enable -Wall])
@@ -49,5 +50,6 @@ else
   AC_MSG_RESULT(no)
 fi
 
-AC_OUTPUT(Makefile)
+CFLAGS="$CFLAGS $X_CFLAGS"
 
+AC_OUTPUT(Makefile)

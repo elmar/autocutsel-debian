@@ -1,8 +1,7 @@
 /*
- * cutsel.c by Michael Witrant <mike @ lepton . fr>
+ * autocutsel by Michael Witrant <mike @ lepton . fr>
  * Manipulates the cutbuffer and the selection
- * version 0.1
- * Copyright (c) 2002,2004 Michael Witrant.
+ * Copyright (c) 2001-2006 Michael Witrant.
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,29 +23,7 @@
  */
 
 
-#include "config.h"
-
-#include <X11/Xmu/Atoms.h>
-#include <X11/Xmu/StdSel.h>
-
-#include <X11/Intrinsic.h>
-#include <X11/StringDefs.h>
-#include <X11/Xlib.h>
-#include <X11/Xatom.h>
-#include <X11/Shell.h>
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/Xaw/Box.h>
-#include <X11/Xaw/Cardinals.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-static Widget box;
-static Display* dpy;
-static XtAppContext context;
-static Atom selection;
-static int buffer;
+#include "common.h"
 
 static XrmOptionDescRec optionDesc[] = {
   {"-selection", "selection", XrmoptionSepArg, NULL},
@@ -62,28 +39,13 @@ static XrmOptionDescRec optionDesc[] = {
   {"-v",         "verbose",   XrmoptionNoArg,  "on"},
 };
 
-int Syntax(call)
-     char *call;
+int Syntax(char *call)
 {
   fprintf (stderr,
-	   "usage:  %s [-selection <name>] [-cutbuffer <number>] [-debug] [-verbose] cut|sel [value]\n",
-	   call);
+    "usage:  %s [-selection <name>] [-cutbuffer <number>] [-debug] [-verbose] cut|sel [value]\n",
+    call);
   exit (1);
 }
-
-typedef struct {
-  String  selection_name;
-  int     buffer;
-  String  debug_option;
-  String  verbose_option;
-  int     debug; 
-  int     verbose; 
-  Atom    selection;
-  char*   value;
-  int     length;
-} OptionsRec;
-
-OptionsRec options;
 
 #define Offset(field) XtOffsetOf(OptionsRec, field)
 
@@ -100,128 +62,65 @@ static XtResource resources[] = {
 
 #undef Offset
 
-static void PrintValue(char *value, int length)
-{
-  write(1, value, length);
-  write(1, "\n", 1);
-}
-
-// called when someone requests the selection value
-static Boolean ConvertSelection(w, selection, target,
-                                type, value, length, format)
-     Widget w;
-     Atom *selection, *target, *type;
-     XtPointer *value;
-     unsigned long *length;
-     int *format;
-{
-  Display* d = XtDisplay(w);
-  XSelectionRequestEvent* req =
-    XtGetSelectionRequest(w, *selection, (XtRequestId)NULL);
-   
-  if (options.debug)
-    printf("%p requested the selection\n", target);
-   
-  if (*target == XA_TARGETS(d)) {
-    Atom* targetP;
-    XPointer std_targets;
-    unsigned long std_length;
-    XmuConvertStandardSelection(w, req->time, selection, target, type,
-				&std_targets, &std_length, format);
-    *value = XtMalloc(sizeof(Atom)*(std_length + 4));
-    targetP = *(Atom**)value;
-    *length = std_length + 4;
-    *targetP++ = XA_STRING;
-    *targetP++ = XA_TEXT(d);
-    *targetP++ = XA_LENGTH(d);
-    *targetP++ = XA_LIST_LENGTH(d);
-    /*
-     *targetP++ = XA_CHARACTER_POSITION(d);
-     */
-    memmove( (char*)targetP, (char*)std_targets, sizeof(Atom)*std_length);
-    XtFree((char*)std_targets);
-    *type = XA_ATOM;
-    *format = 32;
-
-    return True;
-  }
-  if (*target == XA_STRING || *target == XA_TEXT(d)) {
-    *type = XA_STRING;
-    *value = XtMalloc((Cardinal) options.length);
-    memmove( (char *) *value, options.value, options.length);
-    *length = options.length;
-    *format = 8;
-
-    if (options.debug)
-      {
-	printf("Giving value as string: ");
-	PrintValue((char*)*value, *length);
-	printf("\n");
-      }
-   
-    return True;
-  }
-  if (*target == XA_LIST_LENGTH(d)) {
-    long *temp = (long *) XtMalloc (sizeof(long));
-    *temp = 1L;
-    *value = (XtPointer) temp;
-    *type = XA_INTEGER;
-    *length = 1;
-    *format = 32;
-    return True;
-  }
-  if (*target == XA_LENGTH(d)) {
-    long *temp = (long *) XtMalloc (sizeof(long));
-    *temp = options.length;
-    *value = (XtPointer) temp;
-    *type = XA_INTEGER;
-    *length = 1;
-    *format = 32;
-    return True;
-  }
-#ifdef notdef
-  if (*target == XA_CHARACTER_POSITION(d)) {
-    long *temp = (long *) XtMalloc (2 * sizeof(long));
-    temp[0] = ctx->text.s.left + 1;
-    temp[1] = ctx->text.s.right;
-    *value = (XtPointer) temp;
-    *type = XA_SPAN(d);
-    *length = 2;
-    *format = 32;
-    return True;
-  }
-#endif /* notdef */
-  if (XmuConvertStandardSelection(w, req->time, selection, target, type,
-				  (XPointer *)value, length, format))
-    return True;
-   
-  /* else */
-  return False;
-}
-
 // Called when we no longer own the selection
-static void LoseSelection(w, selection)
-     Widget w;
-     Atom *selection;
+static void LoseSelection(Widget w, Atom *selection)
 {
   if (options.debug)
     printf("Selection lost\n");
   exit(0);
 }
 
-// Called when the requested selection value is availiable
-static void SelectionReceived(w, client_data, selection, type, value, received_length, format)
-     Widget w;
-     XtPointer client_data;
-     Atom *selection, *type;
-     XtPointer value;
-     unsigned long *received_length;
-     int *format;
+static void PrintSelection(Widget w, XtPointer client_data, Atom *selection,
+                           Atom *type, XtPointer value,
+                           unsigned long *received_length, int *format)
 {
-  int length = *received_length;
+  Display* d = XtDisplay(w);
   
-  if (*type != 0 && *type != XT_CONVERT_FAIL)
-      PrintValue(value, length);
+  if (*type == 0)
+    printf("Nobody owns the selection\n");
+  else if (*type == XA_STRING)
+      printf("%s\n", (char*)value);
+  else
+    printf("Invalid type received: %s\n", XGetAtomName(d, *type));
+
+  XtFree(value);
+  exit(0);
+}
+
+static void TargetsReceived(Widget w, XtPointer client_data, Atom *selection,
+                           Atom *type, XtPointer value,
+                           unsigned long *length, int *format)
+{
+  Display* d = XtDisplay(w);
+  int i;
+  Atom *atoms;
+  
+  if (*type == 0)
+    printf("No target received\n");
+  else if (*type == XA_ATOM) {
+    atoms = (Atom*)value;
+    printf("%lu targets (%i bits each):\n", *length, *format);
+    for (i=0; i<*length; i++)
+      printf("%s\n", XGetAtomName(d, atoms[i]));
+  } else
+    printf("Invalid type received: %s\n", XGetAtomName(d, *type));
+
+  XtFree(value);
+  exit(0);
+}
+
+static void LengthReceived(Widget w, XtPointer client_data, Atom *selection,
+                           Atom *type, XtPointer value,
+                           unsigned long *received_length, int *format)
+{
+  Display* d = XtDisplay(w);
+  
+  if (*type == 0)
+    printf("No length received\n");
+  else if (*type == XA_INTEGER) {
+      printf("Length is %lu\n", *(CARD32*)value);
+  } else
+      printf("Invalid type received: %s\n", XGetAtomName(d, *type));
 
   XtFree(value);
   exit(0);
@@ -230,21 +129,35 @@ static void SelectionReceived(w, client_data, selection, type, value, received_l
 void OwnSelection(XtPointer p, XtIntervalId* i)
 {
   if (XtOwnSelection(box, options.selection,
-		     0, //XtLastTimestampProcessed(dpy),
-		     ConvertSelection, LoseSelection, NULL) == True)
-    {
-      if (options.debug)
-	printf("Selection owned\n");
-    }
-  else
+                     0, //XtLastTimestampProcessed(dpy),
+                     ConvertSelection, LoseSelection, NULL) == True) {
+    if (options.debug)
+      printf("Selection owned\n");
+  } else
     printf("WARNING: Unable to own selection!\n");
 }
 
 void GetSelection(XtPointer p, XtIntervalId* i)
 {
   XtGetSelectionValue(box, selection, XA_STRING,
-		      SelectionReceived, NULL,
-		      XtLastTimestampProcessed(XtDisplay(box)));
+    PrintSelection, NULL,
+    CurrentTime);
+}
+
+void GetTargets(XtPointer p, XtIntervalId* i)
+{
+  Display* d = XtDisplay(box);
+    XtGetSelectionValue(box, selection, XA_TARGETS(d),
+      TargetsReceived, NULL,
+      CurrentTime);
+}
+
+void GetLength(XtPointer p, XtIntervalId* i)
+{
+  Display* d = XtDisplay(box);
+    XtGetSelectionValue(box, selection, XA_LENGTH(d),
+      LengthReceived, NULL,
+      CurrentTime);
 }
 
 void Exit(XtPointer p, XtIntervalId* i)
@@ -256,16 +169,16 @@ int main(int argc, char* argv[])
 {
   Widget top;
   top = XtVaAppInitialize(&context, "CutSel",
-			  optionDesc, XtNumber(optionDesc), &argc, argv, NULL,
-			  XtNoverrideRedirect, True,
-			  XtNgeometry, "-10-10",
-			  NULL);
+        optionDesc, XtNumber(optionDesc), &argc, argv, NULL,
+        XtNoverrideRedirect, True,
+        XtNgeometry, "-10-10",
+        NULL);
 
   if (argc < 2) Syntax(argv[0]);
 
   XtGetApplicationResources(top, (XtPointer)&options,
-			    resources, XtNumber(resources),
-			    NULL, ZERO );
+    resources, XtNumber(resources),
+    NULL, ZERO );
 
 
   if (strcmp(options.debug_option, "on") == 0)
@@ -277,6 +190,9 @@ int main(int argc, char* argv[])
     options.verbose = 1;
   else
     options.verbose = 0;
+
+  if (options.debug || options.verbose)
+    printf("cutsel v%s\n", VERSION);
    
   options.value = NULL;
   options.length = 0;
@@ -291,13 +207,13 @@ int main(int argc, char* argv[])
   if (strcmp(argv[1], "cut") == 0) {
     if (argc > 2) {
       XStoreBuffer(dpy,
-		   argv[2],
-		   strlen(argv[2]),
-		   buffer);
+       argv[2],
+       strlen(argv[2]),
+       buffer);
       XtAppAddTimeOut(context, 10, Exit, 0);
     } else {
       options.value = XFetchBuffer(dpy, &options.length, buffer);
-      PrintValue(options.value, options.length);
+      printf("%s\n", options.value);
       exit(0);
     }
   } else if (strcmp(argv[1], "sel") == 0) {
@@ -308,6 +224,10 @@ int main(int argc, char* argv[])
     } else {
       XtAppAddTimeOut(context, 10, GetSelection, 0);
     }
+  } else if (strcmp(argv[1], "targets") == 0) {
+    XtAppAddTimeOut(context, 10, GetTargets, 0);
+  } else if (strcmp(argv[1], "length") == 0) {
+    XtAppAddTimeOut(context, 10, GetLength, 0);
   } else {
     Syntax(argv[0]);
   }
@@ -316,5 +236,3 @@ int main(int argc, char* argv[])
   XtAppMainLoop(context);
   return 0;
 }
-
-
