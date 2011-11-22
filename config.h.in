@@ -18,11 +18,11 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
+/* Define as the return type of signal handlers (`int' or `void'). */
+#undef RETSIGTYPE
+
 /* Version number of package */
 #undef VERSION
-
-/* Define if using the dmalloc debugging malloc package */
-#undef WITH_DMALLOC
 
 /* Define to 1 if the X Window System is missing or not being used. */
 #undef X_DISPLAY_MISSING

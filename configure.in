@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(autocutsel.c)
-AM_INIT_AUTOMAKE(autocutsel,0.7.1)
+AM_INIT_AUTOMAKE(autocutsel,0.8.0)
 
 AM_CONFIG_HEADER(config.h)
 
@@ -36,9 +36,9 @@ dnl Checks for libraries.
 dnl Checks for header files.
 
 dnl Checks for typedefs, structures, and compiler characteristics.
+AC_TYPE_SIGNAL
 
 dnl Checks for library functions.
-AM_WITH_DMALLOC
 
 AC_OUTPUT(Makefile)
 
