@@ -1,3 +1,8 @@
+v0.6.2: 2002-06-03
+  - added a cutsel tools to change/retreive the cutbuffer
+    or the selection
+  - fixed minor bugs
+		
 v0.6.1: 2002-06-02
   - uses the length of values instead of '\0' at the end
 

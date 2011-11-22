@@ -63,10 +63,14 @@ PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
 VERSION = @VERSION@
 
-bin_PROGRAMS = autocutsel
+bin_PROGRAMS = autocutsel cutsel
 
 autocutsel_SOURCES = autocutsel.c
 autocutsel_LDADD = $(X_PRE_LIBS) $(X_LIBS) $(X_EXTRA_LIBS) -lX11 -lXext -lXt -lXmu -lXaw
+
+cutsel_SOURCES = cutsel.c
+cutsel_LDADD = $(X_PRE_LIBS) $(X_LIBS) $(X_EXTRA_LIBS) -lX11 -lXext -lXt -lXmu -lXaw
+
 INCLUDES = 
 
 EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL README TODO
@@ -88,6 +92,9 @@ X_PRE_LIBS = @X_PRE_LIBS@
 autocutsel_OBJECTS =  autocutsel.o
 autocutsel_DEPENDENCIES = 
 autocutsel_LDFLAGS = 
+cutsel_OBJECTS =  cutsel.o
+cutsel_DEPENDENCIES = 
+cutsel_LDFLAGS = 
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -101,8 +108,8 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = tar
 GZIP_ENV = --best
-SOURCES = $(autocutsel_SOURCES)
-OBJECTS = $(autocutsel_OBJECTS)
+SOURCES = $(autocutsel_SOURCES) $(cutsel_SOURCES)
+OBJECTS = $(autocutsel_OBJECTS) $(cutsel_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -198,6 +205,10 @@ autocutsel: $(autocutsel_OBJECTS) $(autocutsel_DEPENDENCIES)
 	@rm -f autocutsel
 	$(LINK) $(autocutsel_LDFLAGS) $(autocutsel_OBJECTS) $(autocutsel_LDADD) $(LIBS)
 
+cutsel: $(cutsel_OBJECTS) $(cutsel_DEPENDENCIES)
+	@rm -f cutsel
+	$(LINK) $(cutsel_LDFLAGS) $(cutsel_OBJECTS) $(cutsel_LDADD) $(LIBS)
+
 tags: TAGS
 
 ID: $(HEADERS) $(SOURCES) $(LISP)
@@ -276,6 +287,7 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 autocutsel.o: autocutsel.c config.h
+cutsel.o: cutsel.c config.h
 
 info-am:
 info: info-am

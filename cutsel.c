@@ -1,16 +1,8 @@
 /*
- * autocutsel.c by Michael Witrant <mike @ lepton . fr>
- * Synchronizes the cutbuffer and the selection
- * version 0.6.2
- * Copyright (c) 2001,2002 Michael Witrant.
- * 
- * Most code taken from:
- * * clear-cut-buffers.c by "E. Jay Berkenbilt" <ejb @ ql . org>
- *   in this messages:
- *     http://boudicca.tux.org/mhonarc/ma-linux/2001-Feb/msg00824.html
- * 
- * * xcutsel.c by Ralph Swick, DEC/Project Athena
- *   from the XFree86 project: http://www.xfree86.org/
+ * cutsel.c by Michael Witrant <mike @ lepton . fr>
+ * Manipulates the cutbuffer and the selection
+ * version 0.1
+ * Copyright (c) 2002 Michael Witrant.
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,10 +42,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#ifdef WITH_DMALLOC
-#include "dmalloc.h"
-#endif
-
 static Widget box;
 static Display* dpy;
 static XtAppContext context;
@@ -72,15 +60,13 @@ static XrmOptionDescRec optionDesc[] = {
   {"-d",         "debug",     XrmoptionNoArg,  "on"},
   {"-verbose",   "verbose",   XrmoptionNoArg,  "on"},
   {"-v",         "verbose",   XrmoptionNoArg,  "on"},
-  {"-pause",     "pause",     XrmoptionSepArg, NULL},
-  {"-p",         "pause",     XrmoptionSepArg, NULL},
 };
 
 int Syntax(call)
      char *call;
 {
   fprintf (stderr,
-	   "usage:  %s [-selection <name>] [-cutbuffer <number>] [-pause <milliseconds>] [-debug] [-verbose]\n", 
+	   "usage:  %s [-selection <name>] [-cutbuffer <number>] [-debug] [-verbose] cut|sel [value]\n",
 	   call);
   exit (1);
 }
@@ -90,14 +76,11 @@ typedef struct {
   int     buffer;
   String  debug_option;
   String  verbose_option;
-  String  kill;
-  int     pause;
   int     debug; 
   int     verbose; 
   Atom    selection;
   char*   value;
   int     length;
-  int     own_selection;
 } OptionsRec;
 
 OptionsRec options;
@@ -113,53 +96,16 @@ static XtResource resources[] = {
    Offset(debug_option), XtRString, "off"},
   {"verbose", "Verbose", XtRString, sizeof(String),
    Offset(verbose_option), XtRString, "off"},
-  {"kill", "kill", XtRString, sizeof(String),
-   Offset(kill), XtRString, "off"},
-  {"pause", "Pause", XtRInt, sizeof(int),
-   Offset(pause), XtRImmediate, (XtPointer)500},
 };
 
 #undef Offset
 
-static void PrintValue(value, length)
-     char *value;
-     int length;
+static void PrintValue(char *value, int length)
 {
-  unsigned char c;
-  int len = 0;
-  
-  putc('"', stdout);
-  for (; length > 0; length--, value++)
-    {
-      c = (unsigned char)*value;
-      switch (c)
-	{
-	case '\n':
-	  printf("\\n");
-	  break;
-	case '\r':
-	  printf("\\r");
-	  break;
-	case '\t':
-	  printf("\\t");
-	  break;
-	default:
-	  if (c < 32 || c > 127)
-	    printf("\\x%02X", c);
-	  else
-	    putc(c, stdout);
-	}
-      len++;
-      if (len >= 48)
-	{
-	  printf("\"...");
-	  return;
-	}
-	    
-    }
-  putc('"', stdout);
+  write(1, value, length);
+  write(1, "\n", 1);
 }
-	
+
 // called when someone requests the selection value
 static Boolean ConvertSelection(w, selection, target,
                                 type, value, length, format)
@@ -172,6 +118,9 @@ static Boolean ConvertSelection(w, selection, target,
   Display* d = XtDisplay(w);
   XSelectionRequestEvent* req =
     XtGetSelectionRequest(w, *selection, (XtRequestId)NULL);
+   
+  if (options.debug)
+    printf("%p requested the selection\n", target);
    
   if (*target == XA_TARGETS(d)) {
     Atom* targetP;
@@ -205,7 +154,7 @@ static Boolean ConvertSelection(w, selection, target,
 
     if (options.debug)
       {
-	printf("Giving selection as string: ");
+	printf("Giving value as string: ");
 	PrintValue((char*)*value, *length);
 	printf("\n");
       }
@@ -219,10 +168,6 @@ static Boolean ConvertSelection(w, selection, target,
     *type = XA_INTEGER;
     *length = 1;
     *format = 32;
-
-    if (options.debug)
-      printf("Giving selection list length: %d\n", *temp);
-
     return True;
   }
   if (*target == XA_LENGTH(d)) {
@@ -232,10 +177,6 @@ static Boolean ConvertSelection(w, selection, target,
     *type = XA_INTEGER;
     *length = 1;
     *format = 32;
-
-    if (options.debug)
-      printf("Giving selection length: %d\n", *temp);
-
     return True;
   }
 #ifdef notdef
@@ -255,9 +196,6 @@ static Boolean ConvertSelection(w, selection, target,
     return True;
    
   /* else */
-  if (options.debug)
-    printf("Unable to convert selection\n");
-
   return False;
 }
 
@@ -268,113 +206,7 @@ static void LoseSelection(w, selection)
 {
   if (options.debug)
     printf("Selection lost\n");
-  options.own_selection = 0;
-}
-
-// Returns true if value (or length) is different
-// than current ones.
-static int ValueDiffers(value, length)
-     char *value;
-     int length;
-{
-  return (!options.value ||
-	  length != options.length ||
-	  memcmp(options.value, value, options.length)
-	  );
-}
-
-// Update the current value
-static void ChangeValue(value, length)
-     char *value;
-     int length;
-{
-  if (options.value)
-    XtFree(options.value);
-
-  options.length = length;
-  options.value = XtMalloc(options.length);
-  if (!options.value)
-    printf("WARNING: Unable to allocate memory to store the new value\n");
-  else
-    {
-      memcpy(options.value, value, options.length);
-
-      if (options.debug)
-	{
-	printf("New value saved: ");
-	PrintValue(options.value, options.length);
-	printf("\n");
-	}
-    }
-}
-
-// Called just before owning the selection, to ensure we don't
-// do it if the selection already has the same value
-static void OwnSelectionIfDiffers(w, client_data, selection, type, value, received_length, format)
-     Widget w;
-     XtPointer client_data;
-     Atom *selection, *type;
-     XtPointer value;
-     unsigned long *received_length;
-     int *format;
-{
-  int length = *received_length;
-  
-  if (*type == 0 || 
-      *type == XT_CONVERT_FAIL || 
-      length == 0 || 
-      ValueDiffers(value, length))
-    {
-      if (options.debug)
-	printf("Selection is out of date. Owning it\n");
-      
-      if (options.verbose)
-	{
-	  printf("cut -> sel: ");
-	  PrintValue(options.value, options.length);
-	  printf("\n");
-	}
-      
-      if (XtOwnSelection(box, options.selection,
-			 0, //XtLastTimestampProcessed(dpy),
-			 ConvertSelection, LoseSelection, NULL) == True)
-	{
-	  if (options.debug)
-	    printf("Selection owned\n");
-	  
-	  options.own_selection = 1;
-	}
-      else
-	printf("WARNING: Unable to own selection!\n");
-    }
-  XtFree(value);
-}
-
-// Look for change in the buffer, and update
-// the selection if necessary
-static void CheckBuffer()
-{
-  char *value;
-  int length;
-  
-  value = XFetchBuffer(dpy, &length, buffer);
-  
-  if (length > 0 && ValueDiffers(value, length))
-    {
-      if (options.debug)
-	{
-	printf("Buffer changed: ");
-	PrintValue(value, length);
-	printf("\n");
-	}
-      
-      ChangeValue(value, length);
-      XtGetSelectionValue(box, selection, XA_STRING,
-			  OwnSelectionIfDiffers, NULL,
-			  XtLastTimestampProcessed(XtDisplay(box)));
-    }
-
-  XFree(value);
+  exit(0);
 }
 
 // Called when the requested selection value is availiable
@@ -389,63 +221,47 @@ static void SelectionReceived(w, client_data, selection, type, value, received_l
   int length = *received_length;
   
   if (*type != 0 && *type != XT_CONVERT_FAIL)
-    {
-      if (length > 0 && ValueDiffers(value, length))
-	{
-	  if (options.debug)
-	    {
-	      printf("Selection changed: ");
-	      PrintValue((char*)value, length);
-	      printf("\n");
-	    }
-	  
-	  ChangeValue((char*)value, length);
-	  if (options.verbose)
-	    {
-	      printf("sel -> cut: ");
-	      PrintValue(options.value, options.length);
-	      printf("\n");
-	    }
-	  if (options.debug)
-	    printf("Updating buffer\n");
-	  
-	  XStoreBuffer(XtDisplay(w),
-		       (char*)options.value,
-		       (int)(options.length),
-		       buffer );
-	  
-	  XtFree(value);
-	  return;
-	}
-    }
+      PrintValue(value, length);
+
   XtFree(value);
-  // Unless a new selection value is found, check the buffer value
-  CheckBuffer();
+  exit(0);
 }
 
-// Called each <pause arg=500> milliseconds
-void timeout(XtPointer p, XtIntervalId* i)
+void OwnSelection(XtPointer p, XtIntervalId* i)
 {
-  if (options.own_selection)
-    CheckBuffer();
+  if (XtOwnSelection(box, options.selection,
+		     0, //XtLastTimestampProcessed(dpy),
+		     ConvertSelection, LoseSelection, NULL) == True)
+    {
+      if (options.debug)
+	printf("Selection owned\n");
+    }
   else
-    XtGetSelectionValue(box, selection, XA_STRING,
-			SelectionReceived, NULL,
-			XtLastTimestampProcessed(XtDisplay(box)));
-  
-  XtAppAddTimeOut(context, options.pause, timeout, 0);
+    printf("WARNING: Unable to own selection!\n");
+}
+
+void GetSelection(XtPointer p, XtIntervalId* i)
+{
+  XtGetSelectionValue(box, selection, XA_STRING,
+		      SelectionReceived, NULL,
+		      XtLastTimestampProcessed(XtDisplay(box)));
+}
+
+void Exit(XtPointer p, XtIntervalId* i)
+{
+  exit(0);
 }
 
 int main(int argc, char* argv[])
 {
   Widget top;
-  top = XtVaAppInitialize(&context, "AutoCutSel",
+  top = XtVaAppInitialize(&context, "CutSel",
 			  optionDesc, XtNumber(optionDesc), &argc, argv, NULL,
 			  XtNoverrideRedirect, True,
 			  XtNgeometry, "-10-10",
 			  0);
 
-  if (argc != 1) Syntax(argv[0]);
+  if (argc < 2) Syntax(argv[0]);
 
   XtGetApplicationResources(top, (XtPointer)&options,
 			    resources, XtNumber(resources),
@@ -465,18 +281,37 @@ int main(int argc, char* argv[])
   options.value = NULL;
   options.length = 0;
 
-  options.own_selection = 0;
-   
   box = XtCreateManagedWidget("box", boxWidgetClass, top, NULL, 0);
   dpy = XtDisplay(top);
    
   selection = XInternAtom(dpy, "PRIMARY", 0);
   options.selection = selection;
   buffer = 0;
-   
-  options.value = XFetchBuffer(dpy, &options.length, buffer);
 
-  XtAppAddTimeOut(context, options.pause, timeout, 0);
+  if (strcmp(argv[1], "cut") == 0) {
+    if (argc > 2) {
+      XStoreBuffer(dpy,
+		   argv[2],
+		   strlen(argv[2]),
+		   buffer);
+      XtAppAddTimeOut(context, 10, Exit, 0);
+    } else {
+      options.value = XFetchBuffer(dpy, &options.length, buffer);
+      PrintValue(options.value, options.length);
+      exit(0);
+    }
+  } else if (strcmp(argv[1], "sel") == 0) {
+    if (argc > 2) {
+      options.value = argv[2];
+      options.length = strlen(argv[2]);
+      XtAppAddTimeOut(context, 10, OwnSelection, 0);
+    } else {
+      XtAppAddTimeOut(context, 10, GetSelection, 0);
+    }
+  } else {
+    Syntax(argv[0]);
+  }
+
   XtRealizeWidget(top);
   XtAppMainLoop(context);
   return 0;
