@@ -24,19 +24,15 @@ config.status: configure
 build: build-arch build-indep
 build-arch: build-stamp
 build-indep: build-stamp
-
 build-stamp:  config.status
 	dh_testdir
-
 	$(MAKE)
-
 	touch $@
 
 clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp 
-
 	[ ! -f Makefile ] || $(MAKE) distclean
 	dh_autotools-dev_restoreconfig
 	dh_clean 
@@ -46,9 +42,7 @@ install: build
 	dh_testroot
 	dh_clean -k 
 	dh_installdirs
-
 	$(MAKE) DESTDIR=$(CURDIR)/debian/autocutsel install
-
 
 # Build architecture-independent files here.
 binary-indep: build install
