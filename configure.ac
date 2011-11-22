@@ -1,12 +1,12 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(autocutsel.c)
-AM_INIT_AUTOMAKE(autocutsel,0.8.0)
+AM_INIT_AUTOMAKE(autocutsel,0.8.1)
 
 AM_CONFIG_HEADER(config.h)
 
 dnl Checks for programs.
 AC_PROG_CC
-AC_PROG_RANLIB
+AC_PROG_LIBTOOL
 AC_PATH_XTRA
 if test "$no_x" = "yes"
 then
@@ -39,6 +39,15 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_SIGNAL
 
 dnl Checks for library functions.
+
+dnl Warnings
+AC_MSG_CHECKING([whether to enable -Wall])
+if test -n "$GCC"; then 
+  AC_MSG_RESULT(adding -Wall to CFLAGS.)
+  CFLAGS="$CFLAGS -Wall"
+else
+  AC_MSG_RESULT(no)
+fi
 
 AC_OUTPUT(Makefile)
 
