@@ -1,3 +1,19 @@
+autocutsel (0.9.0-2) UNRELEASED; urgency=low
+
+  * removed unknown command .HA from autocutsel.1 man page
+  * bumped standards version to 3.9.2 (no changes)
+  * added ${misc:Depends} to debian/control
+  * added recommended targets to debian/rules
+  * updated Uploaders in debian/control
+  * added VCS fields to debian/control
+  * explicitly put packaging under GPL 2+
+  * fix hyphens in cutsel.1 man page
+  * use dh_autotools-dev_*config
+  * remove extra blank lines from debian/rules
+  * explicitly mention copyright in front of (C)
+
+ -- Elmar S. Heeb <elmar@heebs.ch>  Tue, 22 Nov 2011 19:06:16 +0100
+
 autocutsel (0.9.0-1) unstable; urgency=low
 
   * Initial release (Closes: #409084)
