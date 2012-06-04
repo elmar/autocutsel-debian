@@ -11,8 +11,9 @@ autocutsel (0.9.0-2) UNRELEASED; urgency=low
   * use dh_autotools-dev_*config
   * remove extra blank lines from debian/rules
   * explicitly mention copyright in front of (C)
+  * Switch to dpkg-source 3.0 (quilt) format
 
- -- Elmar S. Heeb <elmar@heebs.ch>  Tue, 22 Nov 2011 19:06:16 +0100
+ -- Elmar S. Heeb <elmar@heebs.ch>  Tue, 4 Jun 2012 13:26:36 +0200
 
 autocutsel (0.9.0-1) unstable; urgency=low
 
