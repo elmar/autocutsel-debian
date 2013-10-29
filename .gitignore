@@ -17,3 +17,4 @@
 /debian/autocutsel.debhelper.log
 /debian/autocutsel.substvars
 /debian/files
+/.pc
