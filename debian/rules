@@ -14,21 +14,21 @@ include /usr/share/dpkg/buildflags.mk
 config.status: configure
 	dh_testdir
 	dh_autotools-dev_updateconfig
-	./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
+	dh_auto_configure
 
 build: build-arch build-indep
 build-arch: build-stamp
 build-indep: build-stamp
 build-stamp:  config.status
 	dh_testdir
-	$(MAKE)
+	dh_auto_build
 	touch $@
 
 clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp
-	[ ! -f Makefile ] || $(MAKE) distclean
+	dh_auto_clean
 	dh_autotools-dev_restoreconfig
 	dh_clean
 
@@ -37,7 +37,7 @@ install: build
 	dh_testroot
 	dh_clean -k
 	dh_installdirs
-	$(MAKE) DESTDIR=$(CURDIR)/debian/autocutsel install
+	dh_auto_install
 
 # Build architecture-independent files here.
 binary-indep: build install
