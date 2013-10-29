@@ -1,3 +1,10 @@
+autocutsel (0.9.0-3) UNRELEASED; urgency=low
+
+  * fix cutsel segfault for empty cut buffer (Closes: #727775)
+    Thanks: Jurij Smakov <jurij@wooyd.org>
+
+ -- Elmar S. Heeb <elmar@heebs.ch>  Tue, 29 Oct 2013 16:23:36 +0100
+
 autocutsel (0.9.0-2) unstable; urgency=low
 
   * removed unknown command .HA from autocutsel.1 man page
