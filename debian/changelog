@@ -1,3 +1,9 @@
+autocutsel (0.9.0-4) UNRELEASED; urgency=low
+
+  * new Standards-Version
+
+ -- Elmar S. Heeb <elmar@heebs.ch>  Tue, 29 Oct 2013 17:44:00 +0100
+
 autocutsel (0.9.0-3) unstable; urgency=low
 
   * fix cutsel segfault for empty cut buffer (Closes: #727775)
