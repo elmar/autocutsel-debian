@@ -3,53 +3,5 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-config.status: configure
-	dh_testdir
-	dh_autotools-dev_updateconfig
-	dh_auto_configure
-
-build: build-arch build-indep
-build-arch: build-stamp
-build-indep: build-stamp
-build-stamp:  config.status
-	dh_testdir
-	dh_auto_build
-	touch $@
-
-clean:
-	dh_testdir
-	dh_testroot
-	dh_auto_clean
-	dh_autotools-dev_restoreconfig
-	dh_clean
-
-install: build
-	dh_testdir
-	dh_testroot
-	dh_prep
-	dh_installdirs
-	dh_auto_install
-
-# Build architecture-independent files here.
-binary-indep: build install
-# We have nothing to do by default.
-
-# Build architecture-dependent files here.
-binary-arch: build install
-	dh_testdir
-	dh_testroot
-	dh_installchangelogs
-	dh_installdocs
-	dh_installman
-	dh_link
-	dh_strip
-	dh_compress
-	dh_fixperms
-	dh_installdeb
-	dh_shlibdeps
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
-
-binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install
+%:
+	dh $@ --with=autotools-dev

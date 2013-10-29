@@ -7,6 +7,7 @@ autocutsel (0.9.0-3) UNRELEASED; urgency=low
   * refactor debian/rules:
     * convert to dh_auto_* style
     * rewrite for debhelper compatibility level 9
+    * finally convert to dh style
 
  -- Elmar S. Heeb <elmar@heebs.ch>  Tue, 29 Oct 2013 16:23:36 +0100
 
