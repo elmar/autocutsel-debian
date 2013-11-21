@@ -3,7 +3,10 @@ Section: x11
 Priority: optional
 Maintainer: Elmar S. Heeb <elmar@heebs.ch>
 Uploaders: Axel Beckert <abe@debian.org>
-Build-Depends: debhelper (>= 9), autotools-dev, libxaw7-dev, dpkg-dev (>= 1.16.1~)
+Build-Depends: autotools-dev,
+               debhelper (>= 9),
+               dpkg-dev (>= 1.16.1~),
+               libxaw7-dev
 Standards-Version: 3.9.5
 Homepage: http://www.nongnu.org/autocutsel/
 VCS-Git: git://github.com/elmar/autocutsel-debian.git
@@ -11,8 +14,10 @@ VCS-Browser: https://github.com/elmar/autocutsel-debian
 
 Package: autocutsel
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Enhances: vnc-viewer, emacsen
+Depends: ${misc:Depends},
+         ${shlibs:Depends}
+Enhances: emacsen,
+          vnc-viewer
 Description: Keep the X clipboard and the cutbuffer in sync
  This tracks changes in the server's cutbuffer and clipboard
  selection. when the clipboard is changed, it updates the
