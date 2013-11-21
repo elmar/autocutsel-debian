@@ -1,5 +1,7 @@
-autocutsel (0.9.0-4) UNRELEASED; urgency=low
+autocutsel (0.9.1-1) UNRELEASED; urgency=low
 
+  * new upstream release
+    * dropped patch (applied upstream)
   * new Standards-Version
   * updated debian/watch file
 
