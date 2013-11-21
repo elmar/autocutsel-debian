@@ -1,6 +1,7 @@
 autocutsel (0.9.0-4) UNRELEASED; urgency=low
 
   * new Standards-Version
+  * updated debian/watch file
 
  -- Elmar S. Heeb <elmar@heebs.ch>  Tue, 29 Oct 2013 17:44:00 +0100
 
