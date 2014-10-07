@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([autocutsel], [0.9.1])
+AC_INIT([autocutsel], [0.10.0])
 AC_CONFIG_SRCDIR([autocutsel.c])
 AM_INIT_AUTOMAKE
 
@@ -52,7 +52,5 @@ if test -n "$GCC"; then
 else
   AC_MSG_RESULT(no)
 fi
-
-CFLAGS="$CFLAGS $X_CFLAGS"
 
 AC_OUTPUT(Makefile)
