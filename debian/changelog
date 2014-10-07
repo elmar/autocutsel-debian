@@ -4,8 +4,10 @@ autocutsel (0.10.0-1) unstable; urgency=medium
     * set WM_NAME, _NET_WM_NAME, and _NET_WM_PID (Michael Stapelberg)
     * support for UTF-8 strings
     * minor fixes
+  * dropped patch for WM_NAME, etc. (applied upstream)
+  * new Standards-Version
 
- -- Elmar S. Heeb <elmar@heebs.ch>  Tue, 07 Oct 2014 16:23:57 +0200
+ -- Elmar S. Heeb <elmar@heebs.ch>  Tue, 07 Oct 2014 17:14:35 +0200
 
 autocutsel (0.9.1-2) unstable; urgency=medium
 
