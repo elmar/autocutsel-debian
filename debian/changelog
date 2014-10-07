@@ -1,3 +1,12 @@
+autocutsel (0.10.0-1) unstable; urgency=medium
+
+  * merged upstream version 0.10.0
+    * set WM_NAME, _NET_WM_NAME, and _NET_WM_PID (Michael Stapelberg)
+    * support for UTF-8 strings
+    * minor fixes
+
+ -- Elmar S. Heeb <elmar@heebs.ch>  Tue, 07 Oct 2014 16:23:57 +0200
+
 autocutsel (0.9.1-2) unstable; urgency=medium
 
   * have autocutsel set WM_NAME and friends (Closes: #643847)
