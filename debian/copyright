@@ -1,33 +1,31 @@
-This package was debianized by Elmar S. Heeb <elmar@heebs.ch> on
-Fri, 30 Nov 2007 15:41:20 +0100.
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: autocutsel
+Upstream-Contact: Michael Witrant <mike@lepton.fr>
+Source: http://www.nongnu.org/autocutsel/
 
-It was downloaded from http://www.nongnu.org/autocutsel/
+Files: *
+Copyright: Copyright (C) 2001-2006 Michael Witrant <mike@lepton.fr>
+License: GPL-2+
 
-Upstream Author:
+Files: debian/*
+Copyright: 2007-2012, Elmar S. Heeb <elmar@heebs.ch>
+License: GPL-2+
 
-    Michael Witrant <mike@lepton.fr>
-
-Copyright:
-
-    Copyright (C) 2001-2006 Michael Witrant
-
-License:
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software Foundation,
-    Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
-
-The Debian packaging is copyright (C) 2012, Elmar S. Heeb <elmar@heebs.ch> and
-is licensed under the GPL 2 or later.
-
-See `/usr/share/common-licenses/GPL-2' for the full license text.
+License: GPL-2+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software Foundation,
+ Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
+ .
+ On Debian systems, the full text of the GNU General Public
+ License version 2 can be found in the file
+ `/usr/share/common-licenses/GPL-2'.
