@@ -1,7 +1,7 @@
 .TH "AUTOCUTSEL" "1" "5 December 2007" "autocutsel 0.9.0"
-.SH "NAME" 
-autocutsel \- keep the X clipboard and the cutbuffer in sync 
-.SH "SYNOPSIS" 
+.SH "NAME"
+autocutsel \- keep the X clipboard and the cutbuffer in sync
+.SH "SYNOPSIS"
 .na
 .B autocutsel
 .RB [ \-selection
@@ -16,17 +16,17 @@ autocutsel \- keep the X clipboard and the cutbuffer in sync
 .RB [ \-buttonup ]
 
 .LP
-.SH "DESCRIPTION" 
-.PP 
+.SH "DESCRIPTION"
+.PP
 This manual page documents briefly the
 .B autocutsel
-command. 
+command.
 .PP
 This manual page was written for the
 .B Debian
 distribution because the original
 program does not have a manual page.
-.PP 
+.PP
 .B autocutsel
 tracks changes in the server's
 cutbuffer and clipboard selection.
@@ -50,19 +50,19 @@ the clipboard selection,
 the Windows's clipboard is always
 updated.
 
-.SH "OPTIONS" 
+.SH "OPTIONS"
 .TP
 .B -selection, -select, -sel, -s {CLIPBOARD|PRIMARY}
 Specify which selection to use.
-Default is CLIPBOARD. 
+Default is CLIPBOARD.
 
 .TP
 .B -cutbuffer <number>
-(Details of this parameter unknown.) 
+(Details of this parameter unknown.)
 
 .TP
 .B -debug, -d
-Run with debugging mode. 
+Run with debugging mode.
 
 .TP
 .B -verbose, -v
@@ -73,19 +73,19 @@ Reports the version and announces synchronizations.
 .B -fork, -f
 Run as a daemon program in the background.
 This is recommended when used from an X startup script.
- 
+
 .TP
 .B -pause, -p <milliseconds>
-Wait some milliseconds before owning the selection. 
- 
+Wait some milliseconds before owning the selection.
+
 .TP
 .B -buttonup
 Get the selection only when the
 button 1 is not pressed.
 This may help with OpenOffice Writer.
- 
-.SH "AUTHOR" 
-.PP 
+
+.SH "AUTHOR"
+.PP
 This manual page was written by
 Elmar S. Heeb <elmar@heebs.ch> for the
 .B Debian
@@ -95,11 +95,11 @@ distribute and/or modify this
 document under  the terms of the
 GNU General Public License,
 Version 2 any later version published
-by the Free Software Foundation. 
- 
-.PP 
+by the Free Software Foundation.
+
+.PP
 On Debian systems,
 the complete text of the
 GNU General Public License
 can be found in
-/usr/share/common-licenses/GPL. 
+/usr/share/common-licenses/GPL.
