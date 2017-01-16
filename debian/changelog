@@ -1,3 +1,13 @@
+autocutsel (0.10.0-2) unstable; urgency=medium
+
+  * reformat debian/copyright to be compliant with DEP-5
+  * update VCS-Git from git: to https:
+  * add hardening build flags
+  * update to Standards-Version 3.9.8
+  * revision update for new Debian release; no upstream version change
+
+ -- Elmar S. Heeb <elmar@heebs.ch>  Mon, 16 Jan 2017 15:09:29 +0100
+
 autocutsel (0.10.0-1) unstable; urgency=medium
 
   * merged upstream version 0.10.0
