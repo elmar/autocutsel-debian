@@ -8,7 +8,7 @@ Build-Depends: dh-autoreconf,
                dpkg-dev (>= 1.16.1~),
                libxaw7-dev
 Standards-Version: 3.9.8
-Homepage: http://www.nongnu.org/autocutsel/
+Homepage: https://www.nongnu.org/autocutsel/
 VCS-Git: https://github.com/elmar/autocutsel-debian.git
 VCS-Browser: https://github.com/elmar/autocutsel-debian
 

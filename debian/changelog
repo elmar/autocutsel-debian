@@ -2,6 +2,7 @@ autocutsel (0.10.0-3) UNRELEASED; urgency=medium
 
   * Trim trailing whitespace.
   * Use secure copyright file specification URI.
+  * Use secure URI in Homepage field.
 
  -- Debian Janitor <janitor@jelmer.uk>  Mon, 24 Feb 2020 08:03:11 +0000
 
