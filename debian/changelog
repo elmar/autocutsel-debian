@@ -7,6 +7,7 @@ autocutsel (0.10.0-3) UNRELEASED; urgency=medium
   * Set debhelper-compat version in Build-Depends.
   * Set upstream metadata fields: Bug-Database, Bug-Submit, Repository,
     Repository-Browse.
+  * Drop unnecessary dependency on dh-autoreconf.
 
  -- Debian Janitor <janitor@jelmer.uk>  Mon, 24 Feb 2020 08:03:11 +0000
 
