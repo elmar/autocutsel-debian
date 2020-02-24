@@ -1,4 +1,4 @@
-Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: autocutsel
 Upstream-Contact: Michael Witrant <mike@lepton.fr>
 Source: http://www.nongnu.org/autocutsel/
