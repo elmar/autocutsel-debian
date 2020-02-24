@@ -1,3 +1,9 @@
+autocutsel (0.10.0-3) UNRELEASED; urgency=medium
+
+  * Trim trailing whitespace.
+
+ -- Debian Janitor <janitor@jelmer.uk>  Mon, 24 Feb 2020 08:03:11 +0000
+
 autocutsel (0.10.0-2) unstable; urgency=medium
 
   * reformat debian/copyright to be compliant with DEP-5
@@ -73,4 +79,3 @@ autocutsel (0.9.0-1) unstable; urgency=low
   * added debian/watch
 
  -- Elmar S. Heeb <elmar@heebs.ch>  Thu,  3 Jan 2008 12:26:47 +0100
-
