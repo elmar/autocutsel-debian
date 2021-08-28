@@ -17,7 +17,7 @@ autocutsel (0.10.1-1) UNRELEASED; urgency=medium
   * Set "Rules-Requires-Root: no".
   * Bump debian/watch file version to 4.
 
- -- Debian Janitor <janitor@jelmer.uk>  Mon, 24 Feb 2020 08:03:11 +0000
+ -- Axel Beckert <abe@debian.org>  Sat, 28 Aug 2021 19:50:26 +0200
 
 autocutsel (0.10.0-2) unstable; urgency=medium
 
