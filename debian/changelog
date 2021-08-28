@@ -14,6 +14,7 @@ autocutsel (0.10.1-1) UNRELEASED; urgency=medium
   * Import new upstream release 0.10.1.
   * Bump debhelper-compat to 13.
   * Use common capitalization of "Vcs-*" headers.
+  * Set "Rules-Requires-Root: no".
 
  -- Debian Janitor <janitor@jelmer.uk>  Mon, 24 Feb 2020 08:03:11 +0000
 

@@ -10,6 +10,7 @@ Standards-Version: 3.9.8
 Homepage: https://www.nongnu.org/autocutsel/
 Vcs-Git: https://github.com/elmar/autocutsel-debian.git
 Vcs-Browser: https://github.com/elmar/autocutsel-debian
+Rules-Requires-Root: no
 
 Package: autocutsel
 Architecture: any
