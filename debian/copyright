@@ -4,7 +4,7 @@ Upstream-Contact: Michael Witrant <mike@lepton.fr>
 Source: http://www.nongnu.org/autocutsel/
 
 Files: *
-Copyright: Copyright (C) 2001-2021 Michael Witrant <mike@lepton.fr>
+Copyright: 2001-2021 Michael Witrant <mike@lepton.fr>
 License: GPL-2+
 
 Files: debian/*

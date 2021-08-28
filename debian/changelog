@@ -18,6 +18,7 @@ autocutsel (0.10.1-1) UNRELEASED; urgency=medium
   * Bump debian/watch file version to 4.
   * debian/copyright:
     + Bump copyright years.
+    + Reduce redundant "Copyright: Copyright (C)" to just "Copyright:".
 
  -- Axel Beckert <abe@debian.org>  Sat, 28 Aug 2021 19:50:26 +0200
 
