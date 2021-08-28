@@ -16,6 +16,8 @@ autocutsel (0.10.1-1) UNRELEASED; urgency=medium
   * Use common capitalization of "Vcs-*" headers.
   * Set "Rules-Requires-Root: no".
   * Bump debian/watch file version to 4.
+  * debian/copyright:
+    + Bump copyright years.
 
  -- Axel Beckert <abe@debian.org>  Sat, 28 Aug 2021 19:50:26 +0200
 
