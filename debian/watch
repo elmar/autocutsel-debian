@@ -1,5 +1,5 @@
 # format version number, currently 3; this line is compulsory!
-version=3
+version=4
 
 opts=uversionmangle=s/_/./g,filenamemangle=s/.+\/v?(\d[^\/]*)\.tar\.gz/autocutsel-$1\.tar\.gz/ \
   https://github.com/sigmike/autocutsel/releases .*/v?(\d[^\/]*)\.tar\.gz

@@ -15,6 +15,7 @@ autocutsel (0.10.1-1) UNRELEASED; urgency=medium
   * Bump debhelper-compat to 13.
   * Use common capitalization of "Vcs-*" headers.
   * Set "Rules-Requires-Root: no".
+  * Bump debian/watch file version to 4.
 
  -- Debian Janitor <janitor@jelmer.uk>  Mon, 24 Feb 2020 08:03:11 +0000
 
