@@ -19,6 +19,7 @@ autocutsel (0.10.1-1) UNRELEASED; urgency=medium
   * debian/copyright:
     + Bump copyright years.
     + Reduce redundant "Copyright: Copyright (C)" to just "Copyright:".
+  * Declare compliance with Debian Policy 4.6.0. (No changes needed.)
 
  -- Axel Beckert <abe@debian.org>  Sat, 28 Aug 2021 19:50:26 +0200
 
