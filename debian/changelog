@@ -1,4 +1,4 @@
-autocutsel (0.10.1-1) UNRELEASED; urgency=medium
+autocutsel (0.10.1-1) unstable; urgency=medium
 
   [ Debian Janitor ]
   * Trim trailing whitespace.
@@ -21,7 +21,7 @@ autocutsel (0.10.1-1) UNRELEASED; urgency=medium
     + Reduce redundant "Copyright: Copyright (C)" to just "Copyright:".
   * Declare compliance with Debian Policy 4.6.0. (No changes needed.)
 
- -- Axel Beckert <abe@debian.org>  Sat, 28 Aug 2021 19:50:26 +0200
+ -- Axel Beckert <abe@debian.org>  Sun, 29 Aug 2021 02:00:24 +0200
 
 autocutsel (0.10.0-2) unstable; urgency=medium
 
